@@ -4,30 +4,50 @@
 [ $# -ge 1 ] && [ -f "$1" ] && INPUT="$1" || INPUT="-"
 INPUT=$(cat "$INPUT")
 
-# get game name
-GAME_NAME=$(pup 'h1[itemprop="name"] text{}' <<<"$INPUT" | awk 'NF { $1=$1; print }')
-echo "$GAME_NAME"
+# Extract data using pup and awk
+# awk - Delete leading and trailing whitespace, delete multiple consecutive whitespaces,
+extract_data() {
+    local selector=$1
+    pup <<<"$INPUT" "$selector text{}" | awk 'NF { $1=$1; print }'
+}
 
-# get game info
-# sed - Remove lines 4, 12, 13, 15, 16
-# awk - Delete " – " and " UTC", and then convert datetime to ISO 8601 format
-GAME_INFO=$(
-    pup <<<"$INPUT" 'div.header-wrapper table tbody tr td:nth-child(2) text{}' |
-        awk 'NF { $1=$1; print }' 
-        # sed '4d;12d;13d;15d;16d' |
-        # awk 'NR == 10 || NR == 11 { 
-        #         gsub(/ – /, " ");
-        #         gsub(/ UTC/, "");
-        #         cmd="date -d \""$0"\" +\"%Y-%m-%d %H:%M:%S\""; 
-        #         cmd | getline timestamp; 
-        #         $0=timestamp; 
-        #         close(cmd); 
-        #     } 
-        # { print }'
-)
-echo "$GAME_INFO"
-# cat -n <<< "$GAME_INFO"
+# Extract data with newline replacement
+# paste - Concatenate all lines into one line (https://stackoverflow.com/a/6539865/17771525)
+extract_with_newline_replacement() {
+    extract_data "$1" | paste -sd ","
+}
 
-# get tags of game
-GAME_TAGS=$(pup 'a.btn-tag text{}' <<<"$INPUT")
-echo "$GAME_TAGS"
+# Format date string
+# sed - Remove " – " from date string
+# sed - Trim last 8 characters from date string
+# xargs - Pass date string to date command
+# date - Parse date string. Timestamps are in UTC
+format_date() {
+    sed "s/ –/ /" | sed "s/.\{8\}$//" | xargs -I{} date -d "{}" +"%F %T"
+}
+
+APP_ID=$(extract_data 'div.header-wrapper table tbody tr:first-child td:last-child')
+APP_NAME=$(extract_data 'h1[itemprop="name"]')
+APP_TYPE=$(extract_data 'td[itemprop="applicationCategory"]')
+APP_STORE_NAME=$(extract_data 'td[itemprop="alternateName"]')
+APP_DEVELOPER=$(extract_with_newline_replacement 'a[itemprop="author"]')
+APP_PUBLISHER=$(extract_with_newline_replacement 'a[itemprop="publisher"]')
+APP_FRANCHISE=$(extract_data 'a[href*="/franchise/"]')
+APP_OPERATING_SYSTEM=$(extract_with_newline_replacement 'td.os-icons:last-child')
+APP_CHANGE_NUMBER=$(extract_data 'div.scope-app table > tbody > tr:nth-last-child(3) td:last-child')
+APP_LAST_CHANGE_DATE=$(extract_with_newline_replacement 'div.scope-app table > tbody > tr:nth-last-child(2) > td:last-child' | format_date)
+APP_RELEASE_DATE=$(extract_with_newline_replacement 'div.scope-app table > tbody > tr:last-child > td:last-child' | format_date)
+APP_TAG=$(extract_with_newline_replacement 'a.btn-tag')
+
+echo "$APP_ID"
+echo "$APP_NAME"
+echo "$APP_TYPE"
+echo "$APP_STORE_NAME"
+echo "$APP_DEVELOPER"
+echo "$APP_PUBLISHER"
+echo "$APP_FRANCHISE"
+echo "$APP_OPERATING_SYSTEM"
+echo "$APP_CHANGE_NUMBER"
+echo "$APP_LAST_CHANGE_DATE"
+echo "$APP_RELEASE_DATE"
+echo "$APP_TAG"
