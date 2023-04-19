@@ -1,3 +1,4 @@
 #!/bin/bash
 
-eval /opt/lampp/bin/mysql -u root -e "CREATE DATABASE steam_games_db; USE john_db"
+mysql -u root -e "CREATE DATABASE steam_games_db;"
+mysql -u root steam_games_db < steam_games_db_create.sql
