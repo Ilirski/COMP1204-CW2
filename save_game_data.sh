@@ -10,7 +10,7 @@ insert_value() {
     local value="$3"
 
     if [ -n "$value" ]; then
-        local sql="INSERT INTO $table_name ($column_name) VALUES ($value);"
+        local sql="INSERT INTO $table_name ($column_name) VALUES ('$value');"
         echo "$sql"
         # mysql -u root steam_games_db -e "$sql"
     fi
@@ -36,7 +36,7 @@ readarray -t a <<<"$INPUT"
 # Insert into `app` table
 # insert into tbl (col1,col2) values (nullif('$col1','specialnullvalue') (https://stackoverflow.com/a/75712852/17771525)
 app_sql="INSERT INTO app (app_id, app_name, app_type, app_storename, app_change_number, app_last_change_date, app_release_date)"
-app_sql+="VALUES (${a[0]}, ${a[1]}, ${a[2]}, ${a[3]}, ${a[8]}, ${a[9]}, ${a[10]});"
+app_sql+=" VALUES (${a[0]}, '${a[1]}', '${a[2]}', '${a[3]}', ${a[8]}, '${a[9]}', '${a[10]})';"
 # mysql -u root -e steam_games_db "$app_sql"
 echo "$app_sql"
 
@@ -51,7 +51,7 @@ tags=$(echo "${a[11]}" | tr ',' '\n')
 # Iterate over tags
 while read -r tag; do
     # Insert into `tag` table
-    tag_sql="INSERT INTO tag (tag_name) VALUES ($tag);"
+    tag_sql="INSERT INTO tag (tag_name) VALUES ('$tag');"
     echo "$tag_sql"
     # mysql -u root -e steam_games_db "$tag_sql"
 done <<< "$tags"
