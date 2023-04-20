@@ -17,8 +17,14 @@ if [[ "$INPUT" =~ $RE ]]; then
         exit 1
     fi
 
+    # Scrape app_id from steamdb and save to database
+    eval ./fetch_html.sh "$INPUT" | ./game_data_scraper.sh | ./save_game_data.sh
+
     # Append app_id to app_ids.txt
     echo "$INPUT" >>app_ids.txt
+
+    # Check if database exists
+
 else
     echo "$INPUT is not an integer"
 fi

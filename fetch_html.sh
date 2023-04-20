@@ -15,6 +15,7 @@ CONTENT=$(echo "${response}" | head -c-4) # get all but the last 3 digits
 if [ "$http_code" -eq 200 ]; then
     echo "$CONTENT"
 else
-    echo "Failure"
+    echo "Failure: $http_code"
+    echo "$CONTENT"
     exit 1
 fi
