@@ -1,5 +1,5 @@
 -- Created by Vertabelo (http://vertabelo.com)
--- Last modification date: 2023-04-21 08:41:28.501
+-- Last modification date: 2023-04-21 10:01:57.075
 
 -- tables
 -- Table: app
@@ -7,16 +7,16 @@ CREATE TABLE app (
     app_id int  NOT NULL,
     app_name varchar(200)  NOT NULL,
     app_type varchar(20)  NOT NULL,
-    app_store_name varchar(50)  NOT NULL,
+    app_store_name varchar(50)  NULL,
     app_change_number char(8)  NOT NULL,
     app_last_change_date timestamp  NOT NULL,
-    app_release_date timestamp  NOT NULL,
+    app_release_date timestamp  NULL,
     CONSTRAINT app_pk PRIMARY KEY (app_id)
 );
 
 -- Table: app_developer
 CREATE TABLE app_developer (
-    app_id int  NOT NULL,
+    app_id int  NOT NULL AUTO_INCREMENT,
     developer_id int  NOT NULL,
     CONSTRAINT developer_app_pk PRIMARY KEY (developer_id,app_id)
 );
@@ -30,28 +30,28 @@ CREATE TABLE app_franchise (
 
 -- Table: app_os
 CREATE TABLE app_os (
-    app_id int  NOT NULL,
+    app_id int  NOT NULL AUTO_INCREMENT,
     os_id int  NOT NULL,
     CONSTRAINT app_operating_system_pk PRIMARY KEY (os_id,app_id)
 );
 
 -- Table: app_publisher
 CREATE TABLE app_publisher (
-    app_id int  NOT NULL,
+    app_id int  NOT NULL AUTO_INCREMENT,
     publisher_id int  NOT NULL,
     CONSTRAINT developer_app_pk PRIMARY KEY (publisher_id,app_id)
 );
 
 -- Table: app_tag
 CREATE TABLE app_tag (
-    app_id int  NOT NULL,
+    app_id int  NOT NULL AUTO_INCREMENT,
     tag_id int  NOT NULL,
     CONSTRAINT tag_app_pk PRIMARY KEY (tag_id,app_id)
 );
 
 -- Table: developer
 CREATE TABLE developer (
-    developer_id int  NOT NULL,
+    developer_id int  NOT NULL AUTO_INCREMENT,
     developer_name varchar(100)  NOT NULL,
     CONSTRAINT developer_pk PRIMARY KEY (developer_id)
 );
@@ -65,7 +65,7 @@ CREATE TABLE franchise (
 
 -- Table: log
 CREATE TABLE log (
-    log_id int  NOT NULL,
+    log_id int  NOT NULL AUTO_INCREMENT,
     logged_at timestamp  NOT NULL,
     players_live int  NOT NULL,
     players_24h_peak int  NOT NULL,
@@ -88,32 +88,32 @@ CREATE TABLE log (
 
 -- Table: os
 CREATE TABLE os (
-    os_id int  NOT NULL,
+    os_id int  NOT NULL AUTO_INCREMENT,
     os_name varchar(20)  NOT NULL,
     CONSTRAINT operating_system_pk PRIMARY KEY (os_id)
 );
 
 -- Table: publisher
 CREATE TABLE publisher (
-    publisher_id int  NOT NULL,
+    publisher_id int  NOT NULL AUTO_INCREMENT,
     publisher_name varchar(100)  NOT NULL,
     CONSTRAINT publisher_pk PRIMARY KEY (publisher_id)
 );
 
 -- Table: tag
 CREATE TABLE tag (
-    tag_id int  NOT NULL,
+    tag_id int  NOT NULL AUTO_INCREMENT,
     tag_name varchar(50)  NOT NULL,
     CONSTRAINT tag_pk PRIMARY KEY (tag_id)
 );
 
 -- foreign keys
 -- Reference: app_operating_system_app (table: app_os)
-ALTER TABLE app_os ADD CONSTRAINT app_operating_system_app FOREIGN KEY app_operating_system_app (os_id)
+ALTER TABLE app_os ADD CONSTRAINT app_operating_system_app FOREIGN KEY app_operating_system_app (app_id)
     REFERENCES app (app_id);
 
 -- Reference: app_operating_system_operating_system (table: app_os)
-ALTER TABLE app_os ADD CONSTRAINT app_operating_system_operating_system FOREIGN KEY app_operating_system_operating_system (app_id)
+ALTER TABLE app_os ADD CONSTRAINT app_operating_system_operating_system FOREIGN KEY app_operating_system_operating_system (os_id)
     REFERENCES os (os_id);
 
 -- Reference: developer_app_app (table: app_developer)
