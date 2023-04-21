@@ -1,5 +1,5 @@
 -- Created by Vertabelo (http://vertabelo.com)
--- Last modification date: 2023-04-21 10:01:57.075
+-- Last modification date: 2023-04-21 10:06:29.568
 
 -- tables
 -- Table: app
@@ -16,7 +16,7 @@ CREATE TABLE app (
 
 -- Table: app_developer
 CREATE TABLE app_developer (
-    app_id int  NOT NULL AUTO_INCREMENT,
+    app_id int  NOT NULL,
     developer_id int  NOT NULL,
     CONSTRAINT developer_app_pk PRIMARY KEY (developer_id,app_id)
 );
@@ -30,21 +30,21 @@ CREATE TABLE app_franchise (
 
 -- Table: app_os
 CREATE TABLE app_os (
-    app_id int  NOT NULL AUTO_INCREMENT,
+    app_id int  NOT NULL,
     os_id int  NOT NULL,
     CONSTRAINT app_operating_system_pk PRIMARY KEY (os_id,app_id)
 );
 
 -- Table: app_publisher
 CREATE TABLE app_publisher (
-    app_id int  NOT NULL AUTO_INCREMENT,
+    app_id int  NOT NULL,
     publisher_id int  NOT NULL,
     CONSTRAINT developer_app_pk PRIMARY KEY (publisher_id,app_id)
 );
 
 -- Table: app_tag
 CREATE TABLE app_tag (
-    app_id int  NOT NULL AUTO_INCREMENT,
+    app_id int  NOT NULL,
     tag_id int  NOT NULL,
     CONSTRAINT tag_app_pk PRIMARY KEY (tag_id,app_id)
 );
@@ -58,7 +58,7 @@ CREATE TABLE developer (
 
 -- Table: franchise
 CREATE TABLE franchise (
-    franchise_id int  NOT NULL,
+    franchise_id int  NOT NULL AUTO_INCREMENT,
     franchise_name varchar(100)  NOT NULL,
     CONSTRAINT developer_pk PRIMARY KEY (franchise_id)
 );
