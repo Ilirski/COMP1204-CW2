@@ -1,5 +1,5 @@
 -- Created by Vertabelo (http://vertabelo.com)
--- Last modification date: 2023-04-21 10:06:29.568
+-- Last modification date: 2023-04-21 10:16:21.565
 
 -- tables
 -- Table: app
@@ -90,6 +90,7 @@ CREATE TABLE log (
 CREATE TABLE os (
     os_id int  NOT NULL AUTO_INCREMENT,
     os_name varchar(20)  NOT NULL,
+    UNIQUE INDEX os_ak_1 (os_name),
     CONSTRAINT operating_system_pk PRIMARY KEY (os_id)
 );
 
@@ -103,7 +104,8 @@ CREATE TABLE publisher (
 -- Table: tag
 CREATE TABLE tag (
     tag_id int  NOT NULL AUTO_INCREMENT,
-    tag_name varchar(50)  NOT NULL,
+    tag_name varchar(50)  NOT NULL AUTO_INCREMENT,
+    UNIQUE INDEX tag_ak_1 (tag_name),
     CONSTRAINT tag_pk PRIMARY KEY (tag_id)
 );
 
