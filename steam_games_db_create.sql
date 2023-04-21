@@ -1,5 +1,5 @@
 -- Created by Vertabelo (http://vertabelo.com)
--- Last modification date: 2023-04-21 10:21:23.574
+-- Last modification date: 2023-04-21 13:40:49.926
 
 -- tables
 -- Table: app
@@ -69,21 +69,21 @@ CREATE TABLE franchise (
 CREATE TABLE log (
     log_id int  NOT NULL AUTO_INCREMENT,
     logged_at timestamp  NOT NULL,
-    players_live int  NOT NULL,
-    players_24h_peak int  NOT NULL,
-    players_all_time_peak int  NOT NULL,
-    twitch_viewers int  NOT NULL,
-    twitch_viewers_24h_peak int  NOT NULL,
-    twitch_viewers_all_time_peak int  NOT NULL,
-    store_followers int  NOT NULL,
-    store_top_seller_pos int  NOT NULL,
-    store_pos_reviews int  NOT NULL,
-    store_nev_reviews int  NOT NULL,
-    owner_review_low int  NOT NULL,
-    owner_review_high int  NOT NULL,
-    owner_playtracker int  NOT NULL,
-    owner_vg_insights int  NOT NULL,
-    owner_steamspy int  NOT NULL,
+    players_live int unsigned  NOT NULL,
+    players_24h_peak int unsigned  NOT NULL,
+    players_all_time_peak int unsigned  NOT NULL,
+    twitch_viewers int unsigned  NOT NULL,
+    twitch_viewers_24h_peak int unsigned  NOT NULL,
+    twitch_viewers_all_time_peak int unsigned  NOT NULL,
+    store_followers int unsigned  NOT NULL,
+    store_top_seller_pos int unsigned  NOT NULL,
+    store_pos_reviews int unsigned  NOT NULL,
+    store_neg_reviews int unsigned  NOT NULL,
+    owner_review_lower int unsigned  NOT NULL,
+    owner_review_upper int unsigned  NOT NULL,
+    owner_playtracker int unsigned  NOT NULL,
+    owner_vg_insights int unsigned  NOT NULL,
+    owner_steamspy int unsigned  NOT NULL,
     app_id int  NOT NULL,
     CONSTRAINT log_pk PRIMARY KEY (log_id)
 );
