@@ -18,12 +18,13 @@ insert_values_with_join_table() {
             query_sql+=" ON DUPLICATE KEY UPDATE ${table_name}_id=${table_name}_id;"
             query_sql+=" SET @${table_name}_id = LAST_INSERT_ID();"
             echo "$query_sql"
-            mysql -u root -e "$query_sql" steam_games_db
+            # mysql -u root -e "$query_sql" steam_games_db
 
             # Insert into `app_${table_name}` table
-            local app_table_sql="INSERT INTO app_${table_name} (app_id, ${table_name}_id) VALUES (@app_id, @${table_name}_id);"
+            local app_table_sql="INSERT INTO app_${table_name} (app_id, ${table_name}_id) VALUES (${a[0]}, @${table_name}_id);"
             echo "$app_table_sql"
-            mysql -u root -e "$app_table_sql" steam_games_db
+            query_sql+=" $app_table_sql"
+            mysql -u root -e "$query_sql" steam_games_db
         done <<<"$values"
     fi
 }
@@ -31,9 +32,9 @@ insert_values_with_join_table() {
 insert_app_sql() {
     # Insert into `app` table
     # NULLIF() - Convert empty string to NULL (https://stackoverflow.com/a/75712852/17771525)
-    local app_sql="INSERT INTO app (app_id, app_name, app_type, app_store_name, app_change_number, app_last_change_date, app_release_date)"
+    app_sql+=" INSERT INTO app (app_id, app_name, app_type, app_store_name, app_change_number, app_last_change_date, app_release_date)"
     app_sql+=" VALUES (${a[0]}, '${a[1]}', '${a[2]}', NULLIF('${a[3]}', ''), '${a[8]}', '${a[9]}', NULLIF('${a[10]}', ''));"
-    app_sql+=" SET @app_id = LAST_INSERT_ID();"
+    # app_sql+=" SET @app_id = LAST_INSERT_ID();"
     echo "$app_sql"
     mysql -u root -e "$app_sql" steam_games_db
 }
