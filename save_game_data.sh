@@ -16,12 +16,12 @@ insert_value_many_to_many() {
         query_sql+=" ON DUPLICATE KEY UPDATE ${table_name}_id=${table_name}_id;"
         query_sql+=" SET @${table_name}_id = LAST_INSERT_ID();"
         echo "$query_sql"
-        # mysql -u root steam_games_db -e "$sql"
-        
+        mysql -u root -e "$query_sql" steam_games_db
+
         # Insert into `app_${table_name}` table
         local app_table_sql="INSERT INTO app_${table_name} (app_id, ${table_name}_id) VALUES (@app_id, @${table_name}_id);"
         echo "$app_table_sql"
-        # mysql -u root steam_games_db -e "$sql"
+        mysql -u root -e "$app_table_sql" steam_games_db
     fi
 }
 
@@ -45,15 +45,16 @@ readarray -t a <<<"$INPUT"
 # Insert into `app` table
 # insert into tbl (col1,col2) values (nullif('$col1','specialnullvalue') (https://stackoverflow.com/a/75712852/17771525)
 app_sql="INSERT INTO app (app_id, app_name, app_type, app_store_name, app_change_number, app_last_change_date, app_release_date)"
-app_sql+=" VALUES (${a[0]}, '${a[1]}', '${a[2]}', '${a[3]}', '${a[8]}', '${a[9]}', '${a[10]}';)"
+app_sql+=" VALUES (${a[0]}, '${a[1]}', '${a[2]}', '${a[3]}', '${a[8]}', '${a[9]}', '${a[10]}');"
 app_sql+=" SET @app_id = LAST_INSERT_ID();"
-# mysql -u root -e steam_games_db "$app_sql"
 echo "$app_sql"
+mysql -u root -e "$app_sql" steam_games_db
 
 # Check if developer, publisher, and franchise is not empty. If not empty, insert into their respective table
 insert_value_many_to_many "developer" "developer_name" "${a[4]}"
 insert_value_many_to_many "publisher" "publisher_name" "${a[5]}"
 insert_value_many_to_many "franchise" "franchise_name" "${a[6]}"
+insert_value_many_to_many "os" "os_name" "${a[7]}"
 
 # Split the data into individual tags separated by comma
 tags=$(echo "${a[11]}" | tr ',' '\n')
@@ -65,9 +66,9 @@ while read -r tag; do
     tag_sql+=" SET @tag_id = LAST_INSERT_ID();"
     echo "$tag_sql"
     # mysql -u root -e steam_games_db "$tag_sql"
-    
+
     # Insert into `app_tag` join table
     app_tag_sql="INSERT INTO app_tag (app_id, tag_id) VALUES (@app_id, @tag_id);"
     echo "$app_tag_sql"
     # mysql -u root -e steam_games_db "$app_tag_sql"
-done <<< "$tags"
+done <<<"$tags"
