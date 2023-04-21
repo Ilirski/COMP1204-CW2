@@ -42,4 +42,4 @@ else
     exit 1
 fi
 
-echo "${0##*/} complete..."
+echo "${0##*/} complete..." >&3
