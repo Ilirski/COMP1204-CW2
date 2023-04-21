@@ -1,32 +1,46 @@
 #!/bin/bash
 
-# Read input from stdin if present. Else, read from file (https://superuser.com/a/747905)
-[ $# -ge 1 ] && [ -f "$1" ] && INPUT="$1" || INPUT="-"
-INPUT=$(cat "$INPUT")
-
-insert_value_many_to_many() {
+insert_values_with_join_table() {
     # Insert value into join table of many-to-many relationship (https://stackoverflow.com/a/19734088/17771525)
     local table_name="$1"
     local column_name="$2"
-    local value="$3"
+    local values="$3"
 
-    if [ -n "$value" ]; then
-        # Insert into `tag` table, ignoring duplicate keys (https://stackoverflow.com/a/1361368/17771525)
-        local query_sql="INSERT INTO $table_name ($column_name) VALUES ('$value')"
-        query_sql+=" ON DUPLICATE KEY UPDATE ${table_name}_id=${table_name}_id;"
-        query_sql+=" SET @${table_name}_id = LAST_INSERT_ID();"
-        echo "$query_sql"
-        mysql -u root -e "$query_sql" steam_games_db
+    # Skip if values is empty
+    if [ -n "$values" ]; then
+        # Split the data into individual values separated by comma
+        values=$(echo "${3}" | tr ',' '\n')
 
-        # Insert into `app_${table_name}` table
-        local app_table_sql="INSERT INTO app_${table_name} (app_id, ${table_name}_id) VALUES (@app_id, @${table_name}_id);"
-        echo "$app_table_sql"
-        mysql -u root -e "$app_table_sql" steam_games_db
+        # Iterate over values
+        while read -r value; do
+            # Ignore duplicate keys (https://stackoverflow.com/a/1361368/17771525)
+            local query_sql="INSERT INTO $table_name ($column_name) VALUES ('$value')"
+            query_sql+=" ON DUPLICATE KEY UPDATE ${table_name}_id=${table_name}_id;"
+            query_sql+=" SET @${table_name}_id = LAST_INSERT_ID();"
+            echo "$query_sql"
+            mysql -u root -e "$query_sql" steam_games_db
+
+            # Insert into `app_${table_name}` table
+            local app_table_sql="INSERT INTO app_${table_name} (app_id, ${table_name}_id) VALUES (@app_id, @${table_name}_id);"
+            echo "$app_table_sql"
+            mysql -u root -e "$app_table_sql" steam_games_db
+        done <<<"$values"
     fi
 }
 
-# Read input into array
-readarray -t a <<<"$INPUT"
+insert_app_sql() {
+    # Insert into `app` table
+    # NULLIF() - Convert empty string to NULL (https://stackoverflow.com/a/75712852/17771525)
+    local app_sql="INSERT INTO app (app_id, app_name, app_type, app_store_name, app_change_number, app_last_change_date, app_release_date)"
+    app_sql+=" VALUES (${a[0]}, '${a[1]}', '${a[2]}', NULLIF('${a[3]}', ''), '${a[8]}', '${a[9]}', NULLIF('${a[10]}', ''));"
+    app_sql+=" SET @app_id = LAST_INSERT_ID();"
+    echo "$app_sql"
+    mysql -u root -e "$app_sql" steam_games_db
+}
+
+# Read input from stdin if present. Else, read from file (https://superuser.com/a/747905)
+[ $# -ge 1 ] && [ -f "$1" ] && INPUT="$1" || INPUT="-"
+INPUT=$(cat "$INPUT")
 
 # Array indices to content
 # 0. App ID
@@ -41,34 +55,12 @@ readarray -t a <<<"$INPUT"
 # 9. App Last Change Date
 # 10. App Release Date
 # 11. App Tag
+readarray -t a <<<"$INPUT"
 
-# Insert into `app` table
-# insert into tbl (col1,col2) values (nullif('$col1','specialnullvalue') (https://stackoverflow.com/a/75712852/17771525)
-app_sql="INSERT INTO app (app_id, app_name, app_type, app_store_name, app_change_number, app_last_change_date, app_release_date)"
-app_sql+=" VALUES (${a[0]}, '${a[1]}', '${a[2]}', '${a[3]}', '${a[8]}', '${a[9]}', '${a[10]}');"
-app_sql+=" SET @app_id = LAST_INSERT_ID();"
-echo "$app_sql"
-mysql -u root -e "$app_sql" steam_games_db
 
-# Check if developer, publisher, and franchise is not empty. If not empty, insert into their respective table
-insert_value_many_to_many "developer" "developer_name" "${a[4]}"
-insert_value_many_to_many "publisher" "publisher_name" "${a[5]}"
-insert_value_many_to_many "franchise" "franchise_name" "${a[6]}"
-insert_value_many_to_many "os" "os_name" "${a[7]}"
-
-# Split the data into individual tags separated by comma
-tags=$(echo "${a[11]}" | tr ',' '\n')
-
-# Iterate over tags
-while read -r tag; do
-    tag_sql="INSERT INTO tag (tag_name) VALUES ('$tag')"
-    tag_sql+=" ON DUPLICATE KEY UPDATE tag_id=tag_id;"
-    tag_sql+=" SET @tag_id = LAST_INSERT_ID();"
-    echo "$tag_sql"
-    # mysql -u root -e steam_games_db "$tag_sql"
-
-    # Insert into `app_tag` join table
-    app_tag_sql="INSERT INTO app_tag (app_id, tag_id) VALUES (@app_id, @tag_id);"
-    echo "$app_tag_sql"
-    # mysql -u root -e steam_games_db "$app_tag_sql"
-done <<<"$tags"
+insert_app_sql
+insert_values_with_join_table "developer" "developer_name" "${a[4]}"
+insert_values_with_join_table "publisher" "publisher_name" "${a[5]}"
+insert_values_with_join_table "franchise" "franchise_name" "${a[6]}"
+insert_values_with_join_table "os" "os_name" "${a[7]}"
+insert_values_with_join_table "tag" "tag_name" "${a[11]}"
