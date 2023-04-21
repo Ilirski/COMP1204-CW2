@@ -1,5 +1,5 @@
 -- Created by Vertabelo (http://vertabelo.com)
--- Last modification date: 2023-04-21 10:16:21.565
+-- Last modification date: 2023-04-21 10:21:23.574
 
 -- tables
 -- Table: app
@@ -53,6 +53,7 @@ CREATE TABLE app_tag (
 CREATE TABLE developer (
     developer_id int  NOT NULL AUTO_INCREMENT,
     developer_name varchar(100)  NOT NULL,
+    UNIQUE INDEX developer_ak_1 (developer_name),
     CONSTRAINT developer_pk PRIMARY KEY (developer_id)
 );
 
@@ -60,6 +61,7 @@ CREATE TABLE developer (
 CREATE TABLE franchise (
     franchise_id int  NOT NULL AUTO_INCREMENT,
     franchise_name varchar(100)  NOT NULL,
+    UNIQUE INDEX franchise_ak_1 (franchise_name),
     CONSTRAINT developer_pk PRIMARY KEY (franchise_id)
 );
 
@@ -98,13 +100,14 @@ CREATE TABLE os (
 CREATE TABLE publisher (
     publisher_id int  NOT NULL AUTO_INCREMENT,
     publisher_name varchar(100)  NOT NULL,
+    UNIQUE INDEX publisher_ak_1 (publisher_name),
     CONSTRAINT publisher_pk PRIMARY KEY (publisher_id)
 );
 
 -- Table: tag
 CREATE TABLE tag (
     tag_id int  NOT NULL AUTO_INCREMENT,
-    tag_name varchar(50)  NOT NULL AUTO_INCREMENT,
+    tag_name varchar(50)  NOT NULL,
     UNIQUE INDEX tag_ak_1 (tag_name),
     CONSTRAINT tag_pk PRIMARY KEY (tag_id)
 );

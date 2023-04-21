@@ -13,12 +13,12 @@ insert_values_with_join_table() {
 
         # Iterate over values
         while read -r value; do
-            # Ignore duplicate keys (https://stackoverflow.com/a/1361368/17771525)
-            local query_sql="INSERT INTO $table_name ($column_name) VALUES ('$value')"
-            query_sql+=" ON DUPLICATE KEY UPDATE ${table_name}_id=${table_name}_id;"
-            query_sql+=" SET @${table_name}_id = LAST_INSERT_ID();"
+            # Ignore duplicate keys (https://stackoverflow.com/a/3025332)
+            local query_sql="INSERT INTO $table_name ($column_name)"
+            query_sql+=" SELECT '$value'"
+            query_sql+=" WHERE NOT EXISTS (SELECT * FROM $table_name WHERE $column_name='$value') LIMIT 1;"
+            query_sql+=" SELECT ${table_name}_id INTO @${table_name}_id FROM $table_name WHERE $column_name='$value';"
             echo "$query_sql"
-            # mysql -u root -e "$query_sql" steam_games_db
 
             # Insert into `app_${table_name}` table
             local app_table_sql="INSERT INTO app_${table_name} (app_id, ${table_name}_id) VALUES (${a[0]}, @${table_name}_id);"
@@ -57,7 +57,6 @@ INPUT=$(cat "$INPUT")
 # 10. App Release Date
 # 11. App Tag
 readarray -t a <<<"$INPUT"
-
 
 insert_app_sql
 insert_values_with_join_table "developer" "developer_name" "${a[4]}"
