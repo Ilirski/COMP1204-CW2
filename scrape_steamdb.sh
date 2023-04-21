@@ -10,16 +10,15 @@ TIMESTAMP="$(date +'%F %T')"
 # sed - Removing any remaining HTML tags, leaving only the context text. (https://stackoverflow.com/a/19878198/17771525)
 PARSED_HTML=$(pup 'div.row.row-app-charts div.span6 ul li strong text{}' <<<"$HTML_CONTENT")
 
-# Get App ID
-CLEANED_HTML=$(pup 'div.header-wrapper table tbody tr:first-child td:nth-child(2) text{}' <<<"$HTML_CONTENT")$'\n'
-
-# Get current timestamp when this script is run
-CLEANED_HTML+="$TIMESTAMP"
 
 # Clean input
 # tr - Removes all non-numeric characters (https://stackoverflow.com/a/19724582/17771525)
 # awk - Trims any leading or trailing whitespace and removes any blank lines (https://stackoverflow.com/a/48282526/17771525)
-CLEANED_HTML+=$(tr -dc "0-9\n" <<<"$PARSED_HTML" | awk 'NF { $1=$1; print }')
+CLEANED_HTML+=$(sed 's/\.\.//g' <<< "$PARSED_HTML" | tr -dc ".[:digit:]\n" | awk 'NF { $1=$1; print }')$'\n'
+
+# Get App ID
+CLEANED_HTML+=$(pup 'div.header-wrapper table tbody tr:first-child td:nth-child(2) text{}' <<<"$HTML_CONTENT")$'\n'
+CLEANED_HTML+="$TIMESTAMP"
 
 # Output to STDOUT
 printf "%s\n" "$CLEANED_HTML"
