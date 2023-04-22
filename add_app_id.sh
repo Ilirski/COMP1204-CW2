@@ -5,7 +5,7 @@ INPUT="$1"
 # Log output (https://blog.tratif.com/2023/01/09/bash-tips-1-logging-in-shell-scripts/)
 LOGFILE="steamdb_scraper.log"
 exec 3>&1 1>>"$LOGFILE" 2>&1
-trap "echo 'ERROR: An error occurred during execution, check $LOGFILE for details.' >&3" ERR
+trap "echo 'ERROR: An error occurred during execution, check \""$LOGFILE\"" for details.' >&3" ERR
 trap '{ set +x; } 2>/dev/null; echo -n "[$(date -Is)]  "; set -x' DEBUG
 
 echo "Starting ${0##*/}..."

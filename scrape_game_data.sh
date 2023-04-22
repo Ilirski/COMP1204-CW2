@@ -4,7 +4,13 @@
 [ $# -ge 1 ] && [ -f "$1" ] && INPUT="$1" || INPUT="-"
 INPUT=$(cat "$INPUT")
 
-# Extract data using pup and awk
+# Check if pup is in PATH (https://stackoverflow.com/a/677212)
+if ! command -v pup &>/dev/null; then
+    echo "pup could not be found. Please install pup or add it to PATH."
+    exit 1
+fi
+
+# pup - Get HTML element along with their relevant attribute
 # awk - Delete leading and trailing whitespace, delete multiple consecutive whitespaces,
 extract_data() {
     local selector=$1
