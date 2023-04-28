@@ -30,8 +30,9 @@ plot_most_popular_tags() {
     set terminal pngcairo size 1920,1080 enhanced font 'Verdana,10'
     set output 'most_popular_tags.png'
     set title "Most popular tags"
-    set xlabel "Tag"
+    set xlabel "Tags"
     set ylabel "Number of games"
+    set yrange [0:10]
     set style data histogram
     set style histogram cluster gap 1
     set style fill solid border -1
