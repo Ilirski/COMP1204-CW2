@@ -32,7 +32,7 @@ plot_most_popular_tags() {
     set title "Most popular tags"
     set xlabel "Tags"
     set ylabel "Number of games"
-    set yrange [0:10]
+    set xrange [0:10]
     set style data histogram
     set style histogram cluster gap 1
     set style fill solid border -1
