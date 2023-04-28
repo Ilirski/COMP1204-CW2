@@ -54,8 +54,7 @@ while IFS= read -r APP_ID; do
     # fetch_steamdb_html - Curl HTML content from steamdb
     # scrape_game_stats - Scrape the HTML content for game stats
     # save_game_stats - Save the scraped stats to MySQL database
-    # && - Only run the next command if the previous command was successful
-    ./fetch_steamdb_html.sh "$APP_ID" && ./scrape_game_stats.sh && ./save_game_stats.sh
+    ./fetch_steamdb_html.sh "$APP_ID" | ./scrape_game_stats.sh | ./save_game_stats.sh
     
     count=$((count + 1))
 done < <(tail -n +5 app_ids.txt)
