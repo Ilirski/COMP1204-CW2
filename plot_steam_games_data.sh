@@ -24,9 +24,9 @@ die() {
 plot_most_popular_tags() {
     # https://www.percona.com/blog/tpcc-mysql-simple-usage-steps-and-how-to-build-graphs-with-gnuplot/
     # (https://stackoverflow.com/a/1497377/17771525)
-    
+
     # Read multiline string into variable (https://stackoverflow.com/a/23930212/17771525)
-    read -r -d '' sql_query <<- EOM
+    read -r -d '' sql_query <<-EOM
     SELECT tag.tag_name, COUNT(DISTINCT app_tag.app_id) as num_games
     FROM tag
     JOIN app_tag ON tag.tag_id = app_tag.tag_id
@@ -34,8 +34,8 @@ plot_most_popular_tags() {
     ORDER BY num_games DESC;
 EOM
     mysql steam_games_db -u root -B <<<"$sql_query" >"$tmp_file"
-    # set datafile = "$tags_data"
-    gnuplot <<EOF
+
+    gnuplot <<-EOM
     set terminal pngcairo size 1920,1080 enhanced font 'Verdana,10'
     set output 'most_popular_tags.png'
     set title "Most popular tags"
@@ -49,7 +49,7 @@ EOM
     set grid y
     set datafile separator "\t"
     plot "$tmp_file" using 2:xtic(1) title "Games per tag"
-EOF
+EOM
 }
 
 # If no arguments are supplied, display usage (https://stackoverflow.com/a/687816/17771525)
