@@ -41,14 +41,14 @@ EOM
     set title "Most popular tags"
     set xlabel "Tags"
     set ylabel "Number of games"
-    set xrange [0:10]
+    set xrange [0:15]
     set style data histogram
     set style histogram cluster gap 1
     set style fill solid border -1
-    set boxwidth 0.9
     set xtics rotate by -45
+    set grid y
     set datafile separator "\t"
-    plot "$tmp_file" using 2:xtic(1) title "Number of games"
+    plot "$tmp_file" using 2:xtic(1) title "Games per tag"
 EOF
 }
 
