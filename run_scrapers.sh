@@ -6,6 +6,7 @@ exec 3>&1 1>"$LOGFILE" 2>&1
 trap "echo 'ERROR: An error occurred during execution, check \""$LOGFILE\"" for details.' >&3" ERR
 trap '{ set +x; } 2>/dev/null; echo -n "[$(date -Is)]  "; set -x' DEBUG
 
+# Draw progress bar (https://stackoverflow.com/a/52581824/17771525)
 draw_progress_bar() {
     # Don't log this function
     set +x
@@ -30,8 +31,7 @@ draw_progress_bar() {
     set -x
 }
 
-echo "Starting ${0##*/}..." 
-echo "Testing redirection"
+echo "Starting ${0##*/}..."
 
 # Fail if any command fails (https://stackoverflow.com/a/32684221/17771525)
 set -e
@@ -43,7 +43,7 @@ if [ ! -f app_ids.txt ]; then
     exit 1
 fi
 
-# Get number of app ids
+# Get number of app ids to parse
 app_ids=$(tail -n+5 app_ids.txt)
 app_ids_length=$(wc -l <<< "$app_ids")
 count=1

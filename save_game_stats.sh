@@ -25,6 +25,16 @@ INPUT=$(cat "$INPUT")
 # 17. Logged at timestamp
 readarray -t a <<<"$INPUT"
 
+if ! command -v mysql &>/dev/null; then
+    echo "mysql could not be found. Please add mysql to PATH."
+    exit 1
+fi
+
+if [ ! -d /var/lib/mysql/steam_games_db ] ; then 
+    echo "Database steam_games_db does not exist. Please run create_steam_games_db.sh first."
+    exit 1
+fi
+
 # Iterate through owner estimations
 for i in {11..15}; do
     # bc - Convert to million by multiplying by 100000

@@ -6,7 +6,8 @@ INPUT=$(cat "$INPUT")
 
 # Check if pup is in PATH (https://stackoverflow.com/a/677212)
 if ! command -v pup &>/dev/null; then
-    echo "pup could not be found. Please install pup or add it to PATH."
+    echo "pup could not be found."
+    echo "Please install pup (https://github.com/ericchiang/pup) or add pup to PATH."
     exit 1
 fi
 

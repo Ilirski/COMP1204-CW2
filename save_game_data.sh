@@ -58,6 +58,16 @@ INPUT=$(cat "$INPUT")
 # 11. App Tag
 readarray -t a <<<"$INPUT"
 
+if ! command -v mysql &>/dev/null; then
+    echo "mysql could not be found. Please add mysql to PATH."
+    exit 1
+fi
+
+if [ ! -d /var/lib/mysql/steam_games_db ] ; then 
+    echo "Database steam_games_db does not exist. Please run create_steam_games_db.sh first."
+    exit 1
+fi
+
 insert_app_sql
 insert_values_with_join_table "developer" "developer_name" "${a[4]}"
 insert_values_with_join_table "publisher" "publisher_name" "${a[5]}"
