@@ -14,10 +14,13 @@ insert_values_with_join_table() {
         # Iterate over values
         while read -r value; do
             # Ignore duplicate keys (https://stackoverflow.com/a/3025332)
-            local query_sql="INSERT INTO $table_name ($column_name)"
-            query_sql+=" SELECT '$value'"
-            query_sql+=" WHERE NOT EXISTS (SELECT * FROM $table_name WHERE $column_name='$value') LIMIT 1;"
-            query_sql+=" SELECT ${table_name}_id INTO @${table_name}_id FROM $table_name WHERE $column_name='$value';"
+            local query_sql
+            read -r -d '' query_sql <<-EOM
+            INSERT INTO $table_name ($column_name)
+            SELECT '$value'
+            WHERE NOT EXISTS (SELECT * FROM $table_name WHERE $column_name='$value') LIMIT 1;
+            SELECT ${table_name}_id INTO @${table_name}_id FROM $table_name WHERE $column_name='$value';
+EOM
             echo "$query_sql"
 
             # Insert into `app_${table_name}` table
@@ -30,11 +33,14 @@ insert_values_with_join_table() {
 }
 
 insert_app_sql() {
+    # Declare app_sql as a local variable
+    local app_sql
     # Insert into `app` table
     # NULLIF() - Convert empty string to NULL (https://stackoverflow.com/a/75712852/17771525)
-    app_sql+=" INSERT INTO app (app_id, app_name, app_type, app_store_name, app_change_number, app_last_change_date, app_release_date)"
-    app_sql+=" VALUES (${a[0]}, '${a[1]}', '${a[2]}', NULLIF('${a[3]}', ''), '${a[8]}', '${a[9]}', NULLIF('${a[10]}', ''));"
-    # app_sql+=" SET @app_id = LAST_INSERT_ID();"
+    read -r -d '' app_sql <<-EOM
+    INSERT INTO app (app_id, app_name, app_type, app_store_name, app_change_number, app_last_change_date, app_release_date)
+    VALUES (${a[0]}, '${a[1]}', '${a[2]}', NULLIF('${a[3]}', ''), '${a[8]}', '${a[9]}', NULLIF('${a[10]}', ''));
+EOM
     echo "$app_sql"
     mysql -u root -e "$app_sql" steam_games_db
 }
@@ -63,7 +69,7 @@ if ! command -v mysql &>/dev/null; then
     exit 1
 fi
 
-if [ ! -d /var/lib/mysql/steam_games_db ] ; then 
+if [ ! -d /var/lib/mysql/steam_games_db ]; then
     echo "Database steam_games_db does not exist. Please run create_steam_games_db.sh first."
     exit 1
 fi
