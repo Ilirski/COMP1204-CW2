@@ -30,7 +30,7 @@ if ! command -v mysql &>/dev/null; then
     exit 1
 fi
 
-if [ ! -d /var/lib/mysql/steam_games_db ] ; then 
+if [ ! -d /var/lib/mysql/steam_games_db ]; then
     echo "Database steam_games_db does not exist. Please run create_steam_games_db.sh first."
     exit 1
 fi
@@ -41,15 +41,15 @@ for i in {11..15}; do
     a[i]=$(echo "scale=0; ${a[i]} * 1000000 / 1" | bc)
 done
 
-# Insert into `log` table
-sql_query="INSERT INTO log (logged_at, players_live, players_24h_peak, players_all_time_peak,"
-sql_query+=" twitch_viewers, twitch_viewers_24h_peak, twitch_viewers_all_time_peak,"
-sql_query+=" store_followers, store_top_seller_pos, store_pos_reviews, store_neg_reviews, "
-sql_query+=" owner_review_lower, owner_review_upper, owner_playtracker, owner_vg_insights, owner_steamspy, app_id)"
-sql_query+=" VALUES ('${a[17]}', ${a[0]}, ${a[1]}, ${a[2]},"
-sql_query+=" ${a[3]}, ${a[4]}, ${a[5]},"
-sql_query+=" ${a[6]}, ${a[7]}, ${a[8]}, ${a[9]},"
-sql_query+=" ${a[11]}, ${a[12]}, ${a[13]}, ${a[14]}, ${a[15]}, ${a[16]});"
+# Insert into `log` table with heredoc
+read -r -d '' sql_query <<-EOM
+INSERT INTO log (logged_at, players_live, players_24h_peak, players_all_time_peak,
+twitch_viewers, twitch_viewers_24h_peak, twitch_viewers_all_time_peak,
+store_followers, store_top_seller_pos, store_pos_reviews, store_neg_reviews,
+owner_review_lower, owner_review_upper, owner_playtracker, owner_vg_insights, owner_steamspy, app_id)
+VALUES ('${a[17]}', ${a[0]}, ${a[1]}, ${a[2]}, ${a[3]}, ${a[4]}, ${a[5]}, ${a[6]}, ${a[7]},
+${a[8]}, ${a[9]}, ${a[11]}, ${a[12]}, ${a[13]}, ${a[14]}, ${a[15]}, ${a[16]});
+EOM
 
 echo "$sql_query"
 mysql -u root -e "$sql_query" steam_games_db
