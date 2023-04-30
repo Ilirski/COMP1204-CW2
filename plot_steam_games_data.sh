@@ -69,11 +69,11 @@ EOM
     set xrange [0.5:15.5]
     set style data histogram
     set style histogram cluster gap 1
-    set style fill solid
-    set style histogram rowstacked
+    set style fill solid border -1
     set xtics rotate by -45
     set grid y
     set datafile separator "\t"
+
     plot "$tmp_file" using 2:xtic(1) with histogram title "Games per Developer"
 EOM
 }
