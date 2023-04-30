@@ -61,19 +61,20 @@ EOM
     mysql steam_games_db -u root -B <<<"$sql_query" >"$tmp_file"
 
     gnuplot <<-EOM
-    set terminal pngcairo size 1920,1080 enhanced font 'Verdana,10'
+    set terminal pngcairo size 1920,1080 font 'Arial,12' enhanced 
     set output 'games_per_developers.png'
-    set title "Games per developers"
-    set xlabel "Developers"
-    set ylabel "Number of games"
-    set xrange [0:15]
+    set title "Games per Developer"
+    set xlabel "Developer"
+    set ylabel "Number of Games"
+    set xrange [0.5:15.5]
     set style data histogram
     set style histogram cluster gap 1
-    set style fill solid border -1
+    set style fill solid
+    set style histogram rowstacked
     set xtics rotate by -45
     set grid y
     set datafile separator "\t"
-    plot "$tmp_file" using 2:xtic(1) title "Games per developer"
+    plot "$tmp_file" using 2:xtic(1) with histogram title "Games per Developer"
 EOM
 }
 
