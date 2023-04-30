@@ -71,10 +71,11 @@ EOM
     set style histogram cluster gap 1
     set style fill solid border -1
     set xtics rotate by -45
+    set palette model RGB defined ( 0 "#0072BD", 1 "#D95319", 2 "#EDB120", 3 "#7E2F8E", 4 "#77AC30", 5 "#4DBEEE", 6 "#A2142F", 7 "#D8BFD8", 8 "#A0522D", 9 "#FF7F50")
     set grid y
     set datafile separator "\t"
 
-    plot "$tmp_file" using 2:xtic(1) with histogram title "Games per Developer"
+    plot "$tmp_file" using 2:xtic(1) lc palette title "Games per Developer" with boxes fill pattern 2
 EOM
 }
 
