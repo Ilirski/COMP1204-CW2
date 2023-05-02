@@ -234,6 +234,7 @@ plot_live_stats_per_game() {
     sql_query=$(generate_sql_query "$app_id" "$stat" "app_name")
     mysql steam_games_db -u root -B <<<"$sql_query" >"$tmp_file"
     
+    # Reshape data from wide to long format.
     mlr --tsv -I reshape -s app_name,"$stat" "$tmp_file"
     
     local column_count;
