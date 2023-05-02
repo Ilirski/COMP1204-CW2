@@ -32,6 +32,12 @@ usage() {
         -v, --viewers
             Plot total viewers over time.
             Either pass APP_IDs in --app or if APP_ID not passed, by default plots all APP_IDs.
+        -f, --followers
+            Plot total followers over time.
+            Either pass APP_IDs in --app or if APP_ID not passed, by default plots all APP_IDs.
+        -s, --source {playtracker, vg_insights, steamspy}
+            Plot total owners over time according to source.
+            Either pass APP_IDs in --app or if APP_ID not passed, by default plots all APP_IDs.
 EOM
 }
 
@@ -292,6 +298,11 @@ trap 'rm -f "$tmp_file"' SIGTERM SIGINT EXIT
 if [ ! -f "$tmp_file" ]; then
     # Verify that tempfile exists
     printf "Error: tempfile does not exist.\n" >&2
+    exit 1
+fi
+
+if ! command -v mlr &>/dev/null; then
+    echo "miller could not be found. Please install miller with \`sudo apt install miller\`."
     exit 1
 fi
 
