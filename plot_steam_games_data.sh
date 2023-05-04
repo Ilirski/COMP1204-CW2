@@ -190,7 +190,9 @@ EOM
     set title "Games released per year"
     set auto fix
     set offsets graph 0, 0, 1, 1
-    set style data linespoints
+    set style data boxes
+    set style fill solid border -1
+    set boxwidth 0.75
     set xtics 1
     set ytics 1
     set datafile separator "\t"
