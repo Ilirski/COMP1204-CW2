@@ -144,11 +144,11 @@ plot_game_reviews() {
     fi
 
     read -r -d '' sql_query <<-EOM
-SELECT app.app_name, DATE_FORMAT(log.logged_at, '%Y-%m-%d') AS day_and_hour, MAX(log.store_pos_reviews) AS store_pos_reviews, MAX(log.store_neg_reviews) AS store_neg_reviews
-FROM log
-JOIN app ON log.app_id = app.app_id AND app.app_id = $app_id
-GROUP BY app.app_name, day_and_hour
-ORDER BY day_and_hour DESC;
+    SELECT app.app_name, DATE_FORMAT(log.logged_at, '%Y-%m-%d') AS day_and_hour, MAX(log.store_pos_reviews) AS store_pos_reviews, MAX(log.store_neg_reviews) AS store_neg_reviews
+    FROM log
+    JOIN app ON log.app_id = app.app_id AND app.app_id = $app_id
+    GROUP BY app.app_name, day_and_hour
+    ORDER BY day_and_hour DESC;
 EOM
 
     mysql steam_games_db -u root -B <<<"$sql_query" >"$tmp_file"
@@ -156,19 +156,19 @@ EOM
     cat "$tmp_file"
 
     gnuplot <<-EOM
-set terminal pngcairo size 1920,1080 font 'Arial,14' enhanced 
-set output 'store_reviews_histogram.png'
-set xlabel "Store Reviews" font "Arial,16"
-set ylabel "Frequency" font "Arial,16"
-set title "Store Reviews Histogram" font "Arial,20"
-set style data histograms
-set style histogram clustered
-set style fill solid border -1
-set boxwidth 0.9 relative
-set ytics nomirror
-set grid ytics
-set datafile separator "\t"
-plot '$tmp_file' using 3:xtic(2) title columnheader(3), '' using 4 title columnheader(4)
+    set terminal pngcairo size 1920,1080 font 'Arial,14' enhanced 
+    set output 'store_reviews_histogram.png'
+    set xlabel "Store Reviews" font "Arial,16"
+    set ylabel "Frequency" font "Arial,16"
+    set title "Store Reviews Histogram" font "Arial,20"
+    set style data histograms
+    set style histogram clustered
+    set style fill solid border -1
+    set boxwidth 0.9 relative
+    set ytics nomirror
+    set grid ytics
+    set datafile separator "\t"
+    plot '$tmp_file' using 3:xtic(2) title columnheader(3), '' using 4 title columnheader(4)
 EOM
 }
 
@@ -252,6 +252,7 @@ plot_live_stats_per_game() {
     set xdata time
     set timefmt "%Y-%m-%dT%H:00:00"
     set format x "%Y-%m-%d"
+    set auto fix
     set xtics rotate by -45 font "Arial,12"
     set grid xtics ytics
     set key autotitle columnheader
