@@ -70,7 +70,8 @@ if ! command -v mysql &>/dev/null; then
 fi
 
 if [ ! -d /var/lib/mysql/steam_games_db ]; then
-    echo "Database steam_games_db does not exist. Please run create_steam_games_db.sh first."
+    echo "Database steam_games_db does not exist. Please run create_steam_games_db.sh first, or if you have,"
+    echo "check if the path exists."
     exit 1
 fi
 
