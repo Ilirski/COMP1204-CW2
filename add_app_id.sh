@@ -30,8 +30,7 @@ if [[ "$INPUT" =~ $RE ]]; then
     fi
 
     # Scrape app_id from steamdb and save to database
-    # && - Only run the next command if the previous command was successful
-    ./fetch_steamdb_html.sh "$INPUT" && ./scrape_game_data.sh && ./save_game_data.sh
+    ./fetch_steamdb_html.sh "$INPUT" | ./scrape_game_data.sh | ./save_game_data.sh
 
     # Append app_id to app_ids.txt
     echo "$INPUT" >>app_ids.txt
