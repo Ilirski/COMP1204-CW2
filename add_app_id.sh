@@ -1,6 +1,8 @@
 #!/bin/bash
 # app_ids.txt contains all app_ids to be scraped
-INPUT="$1"
+INPUT=$*
+
+echo "$INPUT"
 
 # Log output (https://blog.tratif.com/2023/01/09/bash-tips-1-logging-in-shell-scripts/)
 LOGFILE="steamdb_scraper.log"
@@ -20,26 +22,26 @@ if [ ! -f app_ids.txt ]; then
     echo -e "$HEADER" >>app_ids.txt
 fi
 
-# Check if input is an integer (https://stackoverflow.com/a/806923/17771525)
-RE='^[0-9]+$'
-if [[ "$INPUT" =~ $RE ]]; then
-    # Check if app_ids.txt contain same app_id
-    if grep -q "$INPUT" app_ids.txt; then
-        echo "app_id already exists"
-        exit 1
+for app_id in $INPUT; do
+    echo "Adding app ID $app_id..." >&3
+    # Check if input is an integer (https://stackoverflow.com/a/806923/17771525)
+    if [[ ! "$app_id" =~ ^[0-9]+$ ]]; then
+        echo "$app_id is not an integer, skipping..."
+        continue
     fi
 
-    # Scrape app_id from steamdb and save to database
-    ./fetch_steamdb_html.sh "$INPUT" | ./scrape_game_data.sh | ./save_game_data.sh
+    # Check if app_ids.txt contain same app_id
+    if grep -q "$app_id" app_ids.txt; then
+        echo "App ID $app_id already exists"
+    else
+        # Scrape app_id from steamdb and save to database
+        ./fetch_steamdb_html.sh "$app_id" | ./scrape_game_data.sh | ./save_game_data.sh
 
-    # Append app_id to app_ids.txt
-    echo "$INPUT" >>app_ids.txt
+        # Append app_id to app_ids.txt
+        echo "$app_id" >>app_ids.txt
 
-    echo "App ID $1 successfully added!" >&3
-
-else
-    echo "$INPUT is not an integer"
-    exit 1
-fi
+        echo "App ID $app_id successfully added!" >&3
+    fi
+done
 
 echo "${0##*/} complete..." >&3
