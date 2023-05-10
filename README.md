@@ -10,7 +10,7 @@ Download the CLI programs below. Ensure they are added to PATH (`/usr/local/bin`
 - [pup](https://github.com/ericchiang/pup)
 - [miller](https://miller.readthedocs.io/en/latest/)
 
-- Note: `curl-impersonate` and `pup` cannot be downloaded through `apt`. Therefore, you'll need to install them manually by extracting the binaries from the zip files and adding them to path. Here's a general guide:
+Note: `curl-impersonate` and `pup` cannot be downloaded through `apt`. Therefore, you'll need to install them manually by extracting the binaries from the zip files and adding them to path. Here's a general guide:
 1. Go to their GitHub repository and click on `Releases` in the right side menu.
 2. **Download the correct binary file for your OS.** For example on a Raspberry Pi which runs on the Linux OS and ARM architecture, `aarch64` and `arm` usually work. If you're running these scripts on a VM, keep this in mind.
 3. Unzip the zip / tar file.
