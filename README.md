@@ -19,6 +19,19 @@ Note: `curl-impersonate` and `pup` cannot be downloaded through `apt`. Therefore
 ## Usage
 Note: The script assumes that following path exists: `/var/lib/mysql/steam_games_db`. This is the default installation directory if you install `mysql` with `apt`.
 1. Run `create_steam_games_db.sh` to create the MySQL database to store the data.
+```sh
+./create_steam_gams_db.sh
+```
 2. Run `add_app_id.sh` with one or more steam app id(s) that you want to scrape.
-3. Run `run_scapers.sh` to scrape live steam and twitch data from all the app id(s) you've added. 
-4. If you want to plot the data, run `plot_steam_games_data.sh` with the app id(s) you want to plot.
+```sh
+./app_id_.sh 730
+./app_id.sh 550 990 4000
+```
+3. Run `run_scapers.sh` to scrape live steam and twitch data from all the app id(s) you've added.
+```sh
+./run_scrapers.sh
+```
+4. To plot the data, run `plot_steam_games_data.sh` with the app id(s) you want to plot.
+```sh
+./plot_steam_games_data.sh -a 730 -v
+```
