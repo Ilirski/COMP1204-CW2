@@ -271,11 +271,11 @@ EOM
 }
 
 plot_live_players_per_game() {
-    plot_live_stats_per_game "$1" "players_live" "Live Players per Game" "Players" "live_players_over_time.png" ""
+    plot_live_stats_per_game "$1" "players_live" "Live Players per Game" "Players" "live_players_over_time.png"
 }
 
 plot_live_twitch_viewers_per_game() {
-    plot_live_stats_per_game "$1" "twitch_viewers" "Live Twitch Viewers per Game" "Viewers" "live_twitch_viewers_over_time.png" ""
+    plot_live_stats_per_game "$1" "twitch_viewers" "Live Twitch Viewers per Game" "Viewers" "live_twitch_viewers_over_time.png"
 }
 
 plot_live_followers_per_game() {
@@ -289,7 +289,7 @@ plot_owners_per_game_from_source() {
     fi
 
     # append word with owner
-    plot_live_stats_per_game "$1" "owner_$2" "Game owner over time (according to $2)" "Owners" "$2_owners_over_time.png"
+    plot_live_stats_per_game "$1" "owner_$2" "Game owner over time (according to $2)" "Owners" "$2_owners_over_time.png" "bezier"
 }
 
 
