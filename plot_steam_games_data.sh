@@ -231,6 +231,13 @@ plot_live_stats_per_game() {
     local title="$3"
     local y_axis_label="$4"
     local output_file_name="$5"
+    local smooth="$6"
+    
+    if [[ -z "$smooth" ]]; then
+        smooth=""
+    else
+        smooth="smooth $smooth"
+    fi
 
     local sql_query
     sql_query=$(generate_sql_query "$app_id" "$stat" "app_name")
@@ -259,20 +266,20 @@ plot_live_stats_per_game() {
     set key outside center bottom horizontal font "Arial,14"
     set rmargin 10
     set datafile separator "\t"
-    plot for [col=2:$column_count] '$tmp_file' using 1:col with lines lw 2
+    plot for [col=2:$column_count] '$tmp_file' using 1:col with lines lw 2 $smooth
 EOM
 }
 
 plot_live_players_per_game() {
-    plot_live_stats_per_game "$1" "players_live" "Live Players per Game" "Players" "live_players_over_time.png"
+    plot_live_stats_per_game "$1" "players_live" "Live Players per Game" "Players" "live_players_over_time.png" ""
 }
 
 plot_live_twitch_viewers_per_game() {
-    plot_live_stats_per_game "$1" "twitch_viewers" "Live Twitch Viewers per Game" "Viewers" "live_twitch_viewers_over_time.png"
+    plot_live_stats_per_game "$1" "twitch_viewers" "Live Twitch Viewers per Game" "Viewers" "live_twitch_viewers_over_time.png" ""
 }
 
 plot_live_followers_per_game() {
-    plot_live_stats_per_game "$1" "store_followers" "Store Followers over time" "Store followers" "store_followers_over_time.png"
+    plot_live_stats_per_game "$1" "store_followers" "Store Followers over time" "Store followers" "store_followers_over_time.png" "bezier"
 }
 
 plot_owners_per_game_from_source() {
