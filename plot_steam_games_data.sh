@@ -10,7 +10,6 @@ usage() {
             Show this help message and exit.
         -a. --app APP_IDs
             Plot live stats for the given APP_IDs (comma-separated). Default value is 'all'.
-            IMPORTANT: --app or app must be passed as the first argument.
             e.g: $0 --app 730,440
                  $0 -a 730
                  $0 --app all
@@ -321,10 +320,29 @@ TEMP=$(getopt -o ha:tdowrpvfs --long help,app:,tags,devs,os,reviews,released,pla
 
 eval set -- "$TEMP"
 
-# extract options (https://stackoverflow.com/a/28466267/17771525)
-
+# extract options
 app_id="all"
 source=
+
+# First, process the -a|--app option
+for ((i=1; i<=$#; i++)); do
+    if [ "${!i}" == "-a" ] || [ "${!i}" == "--app" ]; then
+        ((i++))
+        app_id="${!i}"
+        break
+    fi
+done
+
+# Check if each individual app_id is in app_ids.txt
+IFS=',' read -ra app_ids <<< "$app_id"
+for id in "${app_ids[@]}"; do
+    if ! grep -qw "$id" app_ids.txt; then
+        echo "Error: $id is not in app_ids.txt"
+        exit 1
+    fi
+done
+
+# Then process the other options
 while true; do
     case "$1" in
     -h | --help)
@@ -332,7 +350,6 @@ while true; do
         exit 1
         ;;
     -a | --app)
-        app_id="$2"
         shift 2
         ;;
     -t | --tags)
@@ -368,14 +385,16 @@ while true; do
         shift
         ;;
     -s | --source)
-        source="$3"
+        source="$2"
         plot_owners_per_game_from_source "$app_id" "$source"
         exit 0
         ;;
     --)
+        shift
         exit 1
         ;;
     *)
+        shift
         exit 1
         ;;
     esac
