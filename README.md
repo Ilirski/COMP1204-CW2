@@ -24,7 +24,7 @@ Note: The script assumes that following path exists: `/var/lib/mysql/steam_games
 ```
 2. Run `add_app_id.sh` with one or more steam app id(s) that you want to scrape.
 ```sh
-./app_id_.sh 730
+./app_id.sh 730
 ./app_id.sh 550 990 4000
 ```
 3. Run `run_scapers.sh` to scrape live steam and twitch data from all the app id(s) you've added.
@@ -34,4 +34,5 @@ Note: The script assumes that following path exists: `/var/lib/mysql/steam_games
 4. To plot the data, run `plot_steam_games_data.sh` with the app id(s) you want to plot.
 ```sh
 ./plot_steam_games_data.sh -a 730 -v
+./plot_steam_games_data.sh -pf -a 550,730
 ```
