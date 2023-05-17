@@ -334,13 +334,15 @@ for ((i=1; i<=$#; i++)); do
 done
 
 # Check if each individual app_id is in app_ids.txt
-IFS=',' read -ra app_ids <<< "$app_id"
-for id in "${app_ids[@]}"; do
-    if ! grep -qw "$id" app_ids.txt; then
-        echo "Error: $id is not in app_ids.txt"
-        exit 1
-    fi
-done
+if [[ "$app_id" != "all" ]]; then
+    IFS=',' read -ra app_ids <<< "$app_id"
+    for id in "${app_ids[@]}"; do
+        if ! grep -qw "$id" app_ids.txt; then
+            echo "Error: $id is not in app_ids.txt"
+            exit 1
+        fi
+    done
+fi
 
 # Then process the other options
 while true; do
